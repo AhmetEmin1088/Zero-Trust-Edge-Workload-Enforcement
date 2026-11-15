@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-nginx
+  labels:
+    app: secure-web
+spec:
+  containers:
+  - name: nginx
+    # We use a special Nginx image designed to run without root privileges
+    image: nginxinc/nginx-unprivileged:latest
+    ports:
+    - containerPort: 8080
+    securityContext:
+      # This is the VIP pass that proves to Kyverno we are secure!
+      runAsNonRoot: true
+      runAsUser: 101

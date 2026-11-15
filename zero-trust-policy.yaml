@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-zero-trust-workload
+spec:
+  # This is the most important line. We are enforcing the rule, not just logging it.
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: block-root-containers
+      match:
+        any:
+        - resources:
+            kinds:
+            - Pod
+      validate:
+        message: "ZERO TRUST VIOLATION: Running as root is strictly forbidden in this Edge Node!"
+        pattern:
+          spec:
+            containers:
+            - securityContext:
+                runAsNonRoot: true
