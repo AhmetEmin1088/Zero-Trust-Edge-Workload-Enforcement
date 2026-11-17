@@ -11,7 +11,6 @@ spec:
       operations:  ["CREATE", "UPDATE"]
       resources:   ["pods"]
   validations:
-    # If the pod is going to the monitoring, kyverno, or kube-system namespaces, allow it. 
-    # Otherwise, enforce the strict runAsNonRoot rule.
-    - expression: "request.namespace in ['kube-system', 'kyverno', 'monitoring'] || object.spec.containers.all(c, has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == true)"
+    # We added 'chaos-mesh' to the VIP Lane
+    - expression: "request.namespace in ['kube-system', 'kyverno', 'monitoring', 'chaos-mesh'] || object.spec.containers.all(c, has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == true)"
       message: "ZERO TRUST VIOLATION: Running as root is strictly forbidden in this Edge Node!"

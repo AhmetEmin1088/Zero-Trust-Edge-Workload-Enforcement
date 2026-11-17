@@ -1,0 +1,14 @@
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'namespace']
+      group_wait: 10s
+      group_interval: 30s
+      receiver: 'multi-agent-ai-webhook'
+    receivers:
+      - name: 'multi-agent-ai-webhook'
+        webhook_configs:
+          - url: 'http://ai-agent-service.default.svc.cluster.local:5000/alert'
+            send_resolved: true
