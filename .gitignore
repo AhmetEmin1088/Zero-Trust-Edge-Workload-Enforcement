@@ -1,1 +1,7 @@
 kubectl
+
+# Python & Virtual Environments
+venv/
+**/__pycache__/
+*.pyc
+.env

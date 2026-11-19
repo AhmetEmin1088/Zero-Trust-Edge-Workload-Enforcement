@@ -1,0 +1,19 @@
+server:
+  global:
+    scrape_interval: 15s
+    evaluation_interval: 15s
+
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: zero-trust-edge-alerts
+        rules:
+          - alert: HighZeroTrustViolations
+            expr: sum by (resource_namespace) (increase(kyverno_admission_requests_total{request_allowed="false", resource_kind="Pod", resource_namespace!~"kube-system|kyverno|monitoring|chaos-mesh"}[2m])) >= 2
+            labels:
+              severity: HIGH
+              namespace: "{{ $labels.resource_namespace }}"
+              policy_name: "enforce-zero-trust-workload"
+            annotations:
+              summary: "Zero Trust violation spike detected in namespace {{ $labels.resource_namespace }}"
+              description: "Kyverno blocked multiple root pod creation attempts in namespace {{ $labels.resource_namespace }} within the last 2 minutes."
